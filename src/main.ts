@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { NODE_ENVIRONMENT } from './common/assets';
-import * as morgan from 'morgan';
 import { join } from 'path';
 import { PrismaService } from './database/prisma.service';
 import { urlencoded } from 'express';
@@ -26,7 +25,7 @@ async function bootstrap() {
     configService.getOrThrow<string>('NODE_ENV') ===
     NODE_ENVIRONMENT.DEVELOPMENT
   ) {
-    app.use(morgan('dev'));
+    // log all graphql requests
   }
 
   app.useStaticAssets(join(__dirname, '..', '..', 'public'));

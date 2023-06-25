@@ -4,17 +4,33 @@ import { AuthResolver } from './auth.resolver';
 import { UsersModule } from '../users/users.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtATStrategy } from './strategies/jwt-at.strategy';
+import { JwtATStrategy, JwtRTStrategy } from './strategies';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthTransformer } from './auth.transformer';
 
 @Module({
   imports: [
     UsersModule,
-    PassportModule,
-    JwtModule.register({
-      signOptions: { expiresIn: '1d' },
-      secret: 'secret',
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('ACCESS_TOKEN_SECRET'),
+        signOptions: {
+          expiresIn: configService.getOrThrow<string>(
+            'ACCESS_TOKEN_EXPIRES_IN'
+          ),
+        },
+      }),
+      inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, AuthResolver, JwtATStrategy],
+  providers: [
+    AuthService,
+    AuthTransformer,
+    AuthResolver,
+    JwtATStrategy,
+    JwtRTStrategy,
+  ],
 })
 export class AuthModule {}

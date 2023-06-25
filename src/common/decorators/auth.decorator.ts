@@ -1,18 +1,17 @@
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { ATGuard } from '../guards/at.guard';
-import { PermissionGuard, RolesGuard } from '../guards';
+import { Role } from '@prisma/client';
+import { RolesGuard } from '../guards';
 
 type Authorization = {
-  roles?: any[];
-  permissions?: any[];
+  roles?: Role[];
 };
 
 export function Auth(authorization: Authorization): MethodDecorator {
-  const { roles, permissions } = authorization;
+  const { roles } = authorization;
 
   return applyDecorators(
     SetMetadata('roles', roles),
-    SetMetadata('permissions', permissions),
-    UseGuards(ATGuard, RolesGuard, PermissionGuard)
+    UseGuards(ATGuard, RolesGuard)
   );
 }

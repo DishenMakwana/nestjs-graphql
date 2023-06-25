@@ -1,7 +1,7 @@
 import { ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class ATGuard extends AuthGuard('jwt') {
@@ -9,20 +9,25 @@ export class ATGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(
-    context: ExecutionContext
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    const isPublic = this.reflector.get<boolean>(
-      'isPublic',
-      context.getHandler()
-    );
-
-    if (isPublic) {
-      return Promise.resolve(super.canActivate(context))
-        .then(() => true)
-        .catch(() => true);
-    }
-
-    return super.canActivate(context);
+  getRequest<T = any>(context: ExecutionContext): T {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
   }
+
+  // canActivate(
+  //   context: ExecutionContext
+  // ): boolean | Promise<boolean> | Observable<boolean> {
+  //   const isPublic = this.reflector.get<boolean>(
+  //     'isPublic',
+  //     context.getHandler()
+  //   );
+
+  //   if (isPublic) {
+  //     return Promise.resolve(super.canActivate(context))
+  //       .then(() => true)
+  //       .catch(() => true);
+  //   }
+
+  //   return super.canActivate(context);
+  // }
 }

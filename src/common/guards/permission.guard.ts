@@ -1,5 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -20,7 +21,7 @@ export class PermissionGuard implements CanActivate {
       ]),
     ];
 
-    const request = context.switchToHttp().getRequest();
+    const request = GqlExecutionContext.create(context).getContext().req;
 
     if (isPublic && !request.user) {
       return true;

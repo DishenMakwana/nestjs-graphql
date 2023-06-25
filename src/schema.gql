@@ -7,9 +7,14 @@ input CreateUserInput {
   username: String!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 input LoginInput {
-  password: String!
-  username: String!
+  email: String! = "admin@gmail.com"
+  password: String! = "Admin@123"
 }
 
 type LoginResponse {
@@ -18,16 +23,16 @@ type LoginResponse {
 }
 
 type Mutation {
-  createUser(createUserInput: CreateUserInput!): User!
+  createUser(createUserInput: CreateUserInput!): UserEntity!
   login(loginInput: LoginInput!): LoginResponse!
-  removeUser(id: Int!): User!
-  signup(loginInput: LoginInput!): User!
-  updateUser(updateUserInput: UpdateUserInput!): User!
+  logout: Boolean!
+  removeUser(id: Int!): UserEntity!
+  updateUser(updateUserInput: UpdateUserInput!): UserEntity!
 }
 
 type Query {
-  user(username: String!): User!
-  users: [User!]!
+  user(username: String!): UserEntity!
+  users: [UserEntity!]!
 }
 
 input UpdateUserInput {
@@ -37,6 +42,18 @@ input UpdateUserInput {
 }
 
 type User {
+  email: String!
+  id: String!
+  name: String!
+  role: String!
+}
+
+type UserEntity {
+  createdAt: DateTime!
+  email: String!
   id: Int!
-  username: String!
+  name: String
+  password: String
+  role: String!
+  updatedAt: DateTime!
 }

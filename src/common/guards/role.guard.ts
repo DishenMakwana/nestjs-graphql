@@ -1,5 +1,7 @@
 import { CanActivate, Injectable, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { GqlExecutionContext } from '@nestjs/graphql';
+import { Role } from '@prisma/client';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -10,7 +12,7 @@ export class RolesGuard implements CanActivate {
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
     const [requiredRoles, isPublic] = [
-      this.reflector.getAllAndOverride<any[]>('roles', [
+      this.reflector.getAllAndOverride<Role[]>('roles', [
         context.getHandler(),
         context.getClass(),
       ]),
@@ -20,7 +22,7 @@ export class RolesGuard implements CanActivate {
       ]),
     ];
 
-    const request = context.switchToHttp().getRequest();
+    const request = GqlExecutionContext.create(context).getContext().req;
 
     if (isPublic && !request.user) {
       return true;
@@ -30,7 +32,7 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
-    const userRole: any = request.user.role;
+    const userRole: Role = request.user.role;
 
     return requiredRoles.includes(userRole);
   }

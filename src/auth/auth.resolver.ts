@@ -1,8 +1,10 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { AuthService } from './auth.service';
-import { LoginResponse } from './dto/login-res.dto';
-import { LoginInput } from './dto/login.input';
-import { User } from '../users/entities/user.entity';
+import { LoginResponse } from './dto/response.dto';
+import { LoginInput } from './dto/request.dto';
+import { Auth, CurrentUser } from '../common/decorators';
+import { AuthUserType } from '../common/types';
+import { Role } from '@prisma/client';
 
 @Resolver()
 export class AuthResolver {
@@ -13,8 +15,11 @@ export class AuthResolver {
     return this.authService.login(loginInput);
   }
 
-  @Mutation(() => User)
-  async signup(@Args('loginInput') loginInput: LoginInput) {
-    return this.authService.signup(loginInput);
+  @Mutation(() => Boolean)
+  @Auth({
+    roles: [Role.admin, Role.user],
+  })
+  async logout(@CurrentUser() user: AuthUserType) {
+    return this.authService.logout(user);
   }
 }

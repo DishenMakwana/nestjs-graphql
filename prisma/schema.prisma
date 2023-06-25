@@ -10,11 +10,74 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
-  name       String?
-  password   String
+enum Role {
+  admin
+  user
+}
+
+model ApiVersionControl {
+  id               Int       @id @default(autoincrement())
+  app_version      String    @unique @db.VarChar(255)
+  api_version      String    @db.VarChar(255)
+  is_force_update  Boolean   @default(false)
+  release_date     DateTime?
+  end_support_date DateTime?
+  description      String?   @db.VarChar(512)
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @default(now()) @updatedAt
+
+  @@map("api_version_controls")
+}
+
+model Action {
+  id         Int      @id
+  name       String   @unique @db.VarChar(255)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+
+  Logs Log[]
+
+  @@map("actions")
+}
+
+model Log {
+  id         Int      @id @default(autoincrement())
+  action_id  Int
+  user_id    Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Actions Action @relation(fields: [action_id], references: [id], onDelete: Cascade)
+  Users   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("logs")
+}
+
+model Config {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique @db.VarChar(255)
+  value      String   @db.VarChar(255)
+  slug       String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("configs")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique @db.VarChar(255)
+  name       String?   @db.VarChar(255)
+  password   String    @db.VarChar(512)
+  role       Role
+  logo       String?   @db.VarChar(512)
+  code       String?   @db.VarChar(255)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now()) @updatedAt
+  deleted_at DateTime?
+
+  Log Log[]
+
+  @@index([email])
+  @@map("users")
 }

@@ -2,16 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import * as moment from 'moment';
 
 export const softDeleteModels = [
-  'User',
-  'Event',
-  'Location',
-  'Team',
-  'TeamMembers',
-  'UnassignedUser',
-  'Riddle',
-  'Survey',
-  'UserSurveyResponse',
-  'QuestionAnswer',
+  // 'User',
 ];
 
 export const PrismaSoftDeleteMiddleware = (prisma: PrismaClient) => {

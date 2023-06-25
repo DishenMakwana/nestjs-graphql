@@ -5,9 +5,8 @@ export type AuthUserType = {
   id: number;
   email: string;
   role: RoleType;
-  permission: PermissionType;
   access_token: string;
-  username: string;
+  name: string;
 };
 
 export type PayloadType = {
@@ -20,6 +19,7 @@ export type PayloadType = {
 
 export type Tokens = {
   access_token: string;
+  refresh_token: string;
 };
 
 export type Payload = {
