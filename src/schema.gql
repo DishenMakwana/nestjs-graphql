@@ -2,6 +2,16 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ChangePasswordInput {
+  currentPassword: String! = "Admin@123"
+  newPassword: String! = "Admin@123"
+}
+
+type ChangePasswordResponse {
+  message: String!
+  success: Boolean!
+}
+
 input CreateUserInput {
   password: String!
   username: String!
@@ -43,6 +53,7 @@ type LogoutResponse {
 }
 
 type Mutation {
+  changePassword(changePasswordInput: ChangePasswordInput!): ChangePasswordResponse!
   createUser(createUserInput: CreateUserInput!): UserEntity!
   forgotPassword(forgotPasswordInput: ForgotPasswordInput!): ForgotPasswordResponse!
   login(loginInput: LoginInput!): LoginResponse!
