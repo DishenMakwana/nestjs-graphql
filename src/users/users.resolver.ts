@@ -1,45 +1,38 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { UsersService } from './users.service';
-import { User } from './models/users';
-import { GetUserArgs } from './dto/args/get-user.args';
-import { CreateUserInput } from './dto/input/create-user.input';
-import { UpdateUserInput } from './dto/input/update-user.input';
-import { DeleteUserInput } from './dto/input/delete-user.input';
-import { GetUsersArgs } from './dto/args/get-users.args';
+import { CreateUserInput } from './dto/create-user.input';
+import { UpdateUserInput } from './dto/update-user.input';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { ATGuard } from '../common/guards';
+import { UserEntity } from '../common/entities';
 
-@Resolver(() => User)
+@Resolver(() => UserEntity)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(GqlAuthGuard)
-  @Query(() => User, { name: 'user', nullable: true })
-  async getUser(
-    @CurrentUser() user: User,
-    @Args() getUserArgs: GetUserArgs,
-  ): Promise<User> {
-    return this.usersService.getUser(getUserArgs);
+  @Mutation(() => UserEntity)
+  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.usersService.create(createUserInput);
   }
 
-  @Query(() => [User], { name: 'users', nullable: 'items' })
-  async getUsers(@Args() getUsersArgs: GetUsersArgs): Promise<User[]> {
-    return this.usersService.getUsers(getUsersArgs);
+  @Query(() => [UserEntity], { name: 'users' })
+  @UseGuards(ATGuard)
+  async findAll() {
+    return this.usersService.findAll();
   }
 
-  @Mutation(() => User, { name: 'createUser' })
-  createUser(@Args('createUserData') createUserData: CreateUserInput): User {
-    return this.usersService.createUser(createUserData);
+  @Query(() => UserEntity, { name: 'user' })
+  findOne(@Args('username') username: string) {
+    return this.usersService.findOne(username);
   }
 
-  @Mutation(() => User, { name: 'updateUser' })
-  updateUser(@Args('updateUserData') updateUserData: UpdateUserInput): User {
-    return this.usersService.updateUser(updateUserData);
+  @Mutation(() => UserEntity)
+  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return this.usersService.update(updateUserInput.id, updateUserInput);
   }
 
-  @Mutation(() => User, { name: 'deleteUser' })
-  deleteUser(@Args('deleteUserData') deleteUserData: DeleteUserInput): User {
-    return this.usersService.deleteUser(deleteUserData);
+  @Mutation(() => UserEntity)
+  removeUser(@Args('id', { type: () => Int }) id: number) {
+    return this.usersService.remove(id);
   }
 }
