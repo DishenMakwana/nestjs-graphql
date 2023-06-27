@@ -22,6 +22,8 @@ export const message = {
     VERIFICATION_SUCCESSFULLY: 'Verified successfully.',
     REGISTRATION_SUCCESSFULLY: 'Registered successfully.',
     USER_ALREADY_EXISTS: 'User already exists.',
+    SAME_PASSWORD: 'Old and new password are same.',
+    INVALID_CURRENT_PASSWORD: 'Invalid current password.',
   },
   validate: {
     email: 'Please enter valid email.',

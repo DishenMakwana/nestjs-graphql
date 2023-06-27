@@ -12,27 +12,61 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+input ForgotPasswordInput {
+  email: String! = "admin@gmail.com"
+}
+
+type ForgotPasswordResponse {
+  message: String!
+  success: Boolean!
+}
+
+type Login {
+  access_token: String!
+  user: User!
+}
+
 input LoginInput {
   email: String! = "admin@gmail.com"
   password: String! = "Admin@123"
 }
 
 type LoginResponse {
-  access_token: String!
-  user: User!
+  message: String!
+  result: Login!
+  success: Boolean!
+}
+
+type LogoutResponse {
+  message: String!
+  success: Boolean!
 }
 
 type Mutation {
   createUser(createUserInput: CreateUserInput!): UserEntity!
+  forgotPassword(forgotPasswordInput: ForgotPasswordInput!): ForgotPasswordResponse!
   login(loginInput: LoginInput!): LoginResponse!
-  logout: Boolean!
+  logout: LogoutResponse!
   removeUser(id: Int!): UserEntity!
+  resetPassword(resetPasswordInput: ResetPasswordInput!): ResetPasswordResponse!
   updateUser(updateUserInput: UpdateUserInput!): UserEntity!
+  verifyForgotPasswordOtp(verifyOtpInput: VerifyOtpInput!): VerifyOtpResponse!
 }
 
 type Query {
   user(username: String!): UserEntity!
   users: [UserEntity!]!
+}
+
+input ResetPasswordInput {
+  email: String! = "admin@gmail.com"
+  otp: String! = "1234"
+  password: String! = "Admin@123"
+}
+
+type ResetPasswordResponse {
+  message: String!
+  success: Boolean!
 }
 
 input UpdateUserInput {
@@ -56,4 +90,14 @@ type UserEntity {
   password: String
   role: String!
   updatedAt: DateTime!
+}
+
+input VerifyOtpInput {
+  email: String! = "admin@gmail.com"
+  otp: String! = "1234"
+}
+
+type VerifyOtpResponse {
+  message: String!
+  success: Boolean!
 }

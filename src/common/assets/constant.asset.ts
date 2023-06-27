@@ -19,3 +19,8 @@ export const Actions = {
   DELETE_USER: 7,
   OTP_VERIFY: 8,
 };
+
+export const event = {
+  USER_REGISTER: 'user.register',
+  FORGOT_PASSWORD: 'forgot.password',
+};

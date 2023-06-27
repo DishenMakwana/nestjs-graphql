@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtATStrategy, JwtRTStrategy } from './strategies';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthTransformer } from './auth.transformer';
+import { AuthEvent } from './event';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AuthTransformer } from './auth.transformer';
     AuthResolver,
     JwtATStrategy,
     JwtRTStrategy,
+    AuthEvent,
   ],
 })
 export class AuthModule {}
